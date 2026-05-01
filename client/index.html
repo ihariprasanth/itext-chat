@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Anonymous real-time chat. No sign-in. Just pick a name and a room." />
+  <title>itext — anonymous chat</title>
+
+  <!-- Favicon: simple green circle SVG -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2334c759'/><text x='50%' y='52%' dominant-baseline='middle' text-anchor='middle' font-family='-apple-system,sans-serif' font-weight='700' font-size='18' fill='%23000'>i</text></svg>" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ─────────────────────────────────────────────
+       JOIN SCREEN
+  ───────────────────────────────────────────── -->
+  <div id="join-screen" class="screen active">
+    <div class="join-card">
+
+      <!-- Brand -->
+      <div class="brand">
+        <div class="brand-icon">
+          <!-- Message bubble icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <div class="brand-name"><span>i</span>text</div>
+        <div class="brand-tag">anonymous · real-time · no sign-in</div>
+      </div>
+
+      <!-- Form -->
+      <div class="join-form">
+        <div class="field">
+          <label for="input-username">Your handle</label>
+          <input
+            id="input-username"
+            type="text"
+            placeholder="anon42"
+            maxlength="20"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="none"
+            spellcheck="false"
+            inputmode="text"
+          />
+        </div>
+
+        <div class="field">
+          <label for="input-room">Room name</label>
+          <input
+            id="input-room"
+            type="text"
+            placeholder="coffee-lounge"
+            maxlength="50"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="none"
+            spellcheck="false"
+            inputmode="text"
+          />
+          <span class="field-hint">
+            Room is created if it doesn't exist — share the URL to invite anyone
+          </span>
+        </div>
+
+        <button id="btn-join" class="btn-primary">Join Room →</button>
+      </div>
+
+      <div id="join-error" class="join-error hidden" role="alert"></div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       CHAT SCREEN
+  ───────────────────────────────────────────── -->
+  <div id="chat-screen" class="screen">
+
+    <!-- Mobile sidebar backdrop -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" aria-label="Room info and users">
+      <div class="sidebar-top">
+        <!-- Mini brand -->
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <span class="sidebar-brand-name"><span>i</span>text</span>
+        </div>
+
+        <!-- Current room -->
+        <div class="room-info">
+          <div class="room-label">Room</div>
+          <div id="room-name" class="room-name">#general</div>
+        </div>
+      </div>
+
+      <!-- User list -->
+      <div class="users-section">
+        <div class="users-label">
+          Online
+          <span id="user-count" class="badge">0</span>
+        </div>
+        <ul id="user-list" aria-label="Online users"></ul>
+      </div>
+
+      <!-- Leave button -->
+      <div class="sidebar-footer">
+        <button id="btn-leave" class="btn-leave" aria-label="Leave room">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Leave Room
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main chat area -->
+    <main id="chat-main">
+
+      <!-- Header -->
+      <header id="chat-header">
+        <button id="btn-sidebar-toggle" class="sidebar-toggle" aria-label="Open sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="6"  x2="21" y2="6"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+
+        <div class="header-room">
+          <span id="header-room-name" class="header-room-name">#general</span>
+          <span class="live-dot" aria-label="Live" title="Connected"></span>
+        </div>
+
+        <div id="header-user-count" class="header-count">0 online</div>
+      </header>
+
+      <!-- Messages -->
+      <div id="messages" class="messages" role="log" aria-live="polite" aria-atomic="false"></div>
+
+      <!-- Typing indicator -->
+      <div id="typing-bar" class="typing-bar" aria-live="polite" aria-atomic="true"></div>
+
+      <!-- Input row -->
+      <div class="input-area">
+        <input
+          id="msg-input"
+          type="text"
+          placeholder="Message… or /help"
+          maxlength="500"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="sentences"
+          spellcheck="false"
+          aria-label="Type a message"
+        />
+        <button id="btn-send" class="btn-send" aria-label="Send message">
+          <!-- Arrow-up icon — classic iMessage send -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="19" x2="12" y2="5"/>
+            <polyline points="5 12 12 5 19 12"/>
+          </svg>
+        </button>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       HELP OVERLAY
+  ───────────────────────────────────────────── -->
+  <div id="help-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="help-title">
+    <div class="overlay-card">
+      <h2 id="help-title">Commands</h2>
+      <ul class="cmd-list">
+        <li>
+          <code>/nick &lt;name&gt;</code>
+          Change your username
+        </li>
+        <li>
+          <code>/clear</code>
+          Clear your local chat history
+        </li>
+        <li>
+          <code>/help</code>
+          Show this dialog
+        </li>
+      </ul>
+      <button class="btn-close" id="btn-close-help">Close</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
