@@ -165,7 +165,8 @@ function showJoinError(msg) {
 
 function openWS(username, room) {
   const proto = location.protocol === "https:" ? "wss" : "ws";
-  const ws    = new WebSocket(`${proto}://${location.host}`);
+  const SERVER_URL = "wss://itext-chat.onrender.com";
+  const ws = new WebSocket(SERVER_URL);
   state.ws    = ws;
 
   ws.addEventListener("open", () => {
