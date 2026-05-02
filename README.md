@@ -1,6 +1,38 @@
-# itext — Anonymous Real-Time Chat
+# iText
 
-> No sign-in. No database. Pick a name, pick a room, start chatting.
+Anonymous real-time chat. No sign-in. No database. Just pick a name, pick a room, and talk.
+
+Open source — built by students, for anyone who wants to use, learn from, or build on it.
+
+---
+
+## Developers
+
+**Hariprasanth T** — Lead Developer
+Leads the overall architecture and backend of the project. Focused on WebSocket integration, server-side logic, and keeping the platform fast and reliable.
+LinkedIn: https://www.linkedin.com/in/ihariprasanth/
+
+**Sathiyapriya S** — Frontend Developer
+Owns the complete frontend — UI design, responsive layouts, and the overall user experience.
+LinkedIn: https://www.linkedin.com/in/sathiyapriya29/
+
+---
+
+## Features
+
+- No account, no sign-in — just a username and a room name
+- Real-time messaging over WebSocket
+- Create any room on the fly — rooms are created the moment someone joins them
+- Rooms are destroyed automatically when the last person leaves
+- Live typing indicators — see when others are typing
+- Online user list with live count
+- Switch between multiple rooms without leaving the app
+- Rename yourself mid-session using `/nick`
+- Rate limiting — max 10 messages per 5 seconds per user
+- XSS-safe — all message text is escaped on the client before rendering
+- Mobile-first responsive UI, works on any screen size
+- Subtle audio ping on new messages
+- URL room sharing — share `?room=roomname` to drop anyone straight into a room
 
 ---
 
@@ -8,239 +40,114 @@
 
 ```
 itext/
-├── client/          ← Static frontend (HTML + CSS + JS)
-│   ├── index.html
-│   ├── style.css
-│   └── app.js
+├── client/                  # Frontend — served by Firebase Hosting
+│   ├── index.html           # Join screen + Chat screen
+│   ├── about.html           # Developers page
+│   ├── app.js               # All frontend logic (vanilla JS, no frameworks)
+│   ├── style.css            # Full UI styling (CSS variables, mobile-first)
+│   └── assets/
+│       ├── icons/
+│       │   └── icon.png     # App icon
+│       └── developers/
+│           ├── hariprasanth.png
+│           └── sathiyapriya.png
+│
 ├── server/
-│   └── server.js    ← Node.js WebSocket server
-├── firebase.json    ← Firebase Hosting config
-├── .firebaserc      ← Firebase project alias (edit this)
-├── .gitignore
-└── package.json
+│   └── server.js            # Node.js WebSocket + HTTP server
+│
+├── firebase.json            # Firebase Hosting config (public: client/)
+├── .firebaserc              # Firebase project binding
+├── package.json
+└── README.md
 ```
 
 ---
 
-## Run Locally
+## Frontend
 
-```bash
-# Install dependencies
-npm install
+Built with plain HTML, CSS, and vanilla JavaScript — zero frameworks, zero build steps.
 
-# Start server (Node 18+)
-npm start
+**index.html** handles two screens in one page — the join screen and the chat screen — swapped in and out via CSS classes. No routing library needed.
 
-# Or with auto-reload during dev
-npm run dev
+**app.js** manages everything on the client side:
+
+- WebSocket connection lifecycle (open, message, close, error)
+- Join flow with username and room validation
+- Sending and receiving messages
+- Typing signal — debounced, auto-clears after 2 seconds of no input
+- Room switching — dynamically creates room chips in the sidebar as rooms are joined
+- User list rendering
+- `/nick`, `/clear`, `/help` slash commands
+- XSS escaping on all user-generated content before it touches the DOM
+- Subtle audio ping via Web Audio API on incoming messages
+- iOS viewport height fix for the keyboard pushing content up
+
+**style.css** uses CSS custom properties throughout — one place to change the palette. Layout is mobile-first with a sidebar that slides in on small screens and is always visible on desktop.
+
+---
+
+## Backend
+
+**server/server.js** — a single Node.js file. No framework, no database.
+
+Built on the `ws` package for WebSocket and the built-in `http` module to serve static files in local development.
+
+**In-memory room store:**
+
 ```
-
-Open → http://localhost:3000
-
----
-
-## Host on Firebase + Connect to GitHub
-
-### STEP 1 — Create a Firebase Project
-
-1. Go to https://console.firebase.google.com
-2. Click **Add project** → give it a name (e.g. `itext-chat`)
-3. Disable Google Analytics if not needed → **Create project**
-
----
-
-### STEP 2 — Install Firebase CLI
-
-```bash
-npm install -g firebase-tools
-```
-
----
-
-### STEP 3 — Login to Firebase
-
-```bash
-firebase login
-```
-
-A browser window will open — sign in with your Google account.
-
----
-
-### STEP 4 — Set Your Project ID
-
-Edit `.firebaserc` and replace `YOUR_FIREBASE_PROJECT_ID` with your actual project ID:
-
-```json
-{
-  "projects": {
-    "default": "itext-chat"   ← your project ID here
+rooms = {
+  roomName: {
+    users:   { socketId: username },
+    sockets: { socketId: ws }
   }
 }
 ```
 
-Your project ID is visible in the Firebase Console URL:
-`https://console.firebase.google.com/project/YOUR-ID-HERE/...`
+Rooms are plain objects that live in memory. When the last user leaves, the room is deleted. Nothing is persisted to disk.
 
----
+**WebSocket event types the server handles:**
 
-### STEP 5 — Deploy Frontend to Firebase Hosting
+| Type           | What it does                                              |
+|----------------|-----------------------------------------------------------|
+| `join_room`    | Adds the user to a room, creates it if it doesn't exist   |
+| `send_message` | Broadcasts a message to everyone in the room              |
+| `typing`       | Broadcasts typing status to everyone else in the room     |
+| `nick`         | Renames the user and broadcasts the change                |
 
-```bash
-firebase deploy --only hosting
-```
+**WebSocket event types the server sends:**
 
-Your frontend is now live at:
-`https://YOUR_PROJECT_ID.web.app`
+| Type        | What it does                                              |
+|-------------|-----------------------------------------------------------|
+| `welcome`   | Sends the socket ID back to the client on connect         |
+| `joined`    | Confirms room entry, sends current user list              |
+| `message`   | Delivers a chat message to everyone in the room           |
+| `system`    | Broadcasts join/leave/rename notifications                |
+| `user_list` | Sends updated list of online users after any change       |
+| `typing`    | Forwards typing status to other users in the room         |
+| `nick_ok`   | Confirms a successful rename to the requesting client     |
+| `error`     | Sends validation or rate-limit errors back to the client  |
 
-> **Note:** Firebase Hosting serves static files only (HTML/CSS/JS).
-> The WebSocket server (Node.js) needs to be hosted separately — see Step 6.
+**Sanitization:**
 
----
+- Usernames: letters, numbers, `_`, `-`, `.` only — max 20 characters
+- Room names: lowercased, spaces converted to hyphens — max 50 characters
+- Messages: trimmed, max 500 characters — HTML escaping is the client's responsibility
 
-### STEP 6 — Host the WebSocket Server
-
-Firebase Hosting cannot run Node.js servers. Use one of these free/cheap options:
-
-#### Option A — Railway (Recommended, free tier)
-1. Go to https://railway.app and sign in with GitHub
-2. Click **New Project → Deploy from GitHub repo**
-3. Select your itext repo
-4. Railway auto-detects Node.js and runs `npm start`
-5. Click **Generate Domain** to get your server URL
-
-#### Option B — Render (Free tier, sleeps after 15 min inactivity)
-1. Go to https://render.com → **New Web Service**
-2. Connect GitHub repo → set **Build Command:** `npm install`
-3. Set **Start Command:** `npm start`
-4. Deploy and copy your `.onrender.com` URL
-
-#### Option C — Fly.io (Free tier)
-```bash
-npm install -g flyctl
-flyctl auth login
-flyctl launch
-flyctl deploy
-```
-
----
-
-### STEP 7 — Update WebSocket URL in Frontend
-
-Once your server is deployed, update `client/app.js` line that builds the WebSocket URL.
-
-Find this in `app.js`:
-```js
-const ws = new WebSocket(`${proto}://${location.host}`);
-```
-
-Change it to point to your server:
-```js
-const SERVER_URL = "wss://your-server.railway.app"; // ← your server URL
-const ws = new WebSocket(SERVER_URL);
-```
-
-Then redeploy the frontend:
-```bash
-firebase deploy --only hosting
-```
-
----
-
-### STEP 8 — Connect GitHub for Auto-Deploy (CI/CD)
-
-#### A. Push your project to GitHub
-
-```bash
-git init
-git add .
-git commit -m "initial commit"
-git remote add origin https://github.com/YOUR_USERNAME/itext.git
-git push -u origin main
-```
-
-#### B. Set up GitHub Actions for Firebase
-
-Run:
-```bash
-firebase init hosting:github
-```
-
-This will:
-- Ask you to authenticate with GitHub
-- Ask for your repo name (e.g. `yourname/itext`)
-- Auto-generate `.github/workflows/firebase-hosting-merge.yml`
-- Auto-generate `.github/workflows/firebase-hosting-pull-request.yml`
-
-After this, every push to `main` auto-deploys to Firebase Hosting.
-
-#### C. Manual GitHub Actions setup (alternative)
-
-Create `.github/workflows/deploy.yml`:
-
-```yaml
-name: Deploy to Firebase Hosting
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm install
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          channelId: live
-          projectId: YOUR_FIREBASE_PROJECT_ID
-```
-
-Add your Firebase service account key as a GitHub Secret:
-1. Go to Firebase Console → Project Settings → Service Accounts
-2. Click **Generate new private key** → download the JSON
-3. Go to GitHub repo → Settings → Secrets → **New repository secret**
-4. Name: `FIREBASE_SERVICE_ACCOUNT` → paste the JSON content
-
----
-
-## Environment Variables
-
-For production, you can set the port via environment:
-
-```bash
-PORT=8080 npm start
-```
-
-On Railway/Render, set `PORT` in the environment variables dashboard.
-
----
-
-## Commands (in chat)
-
-| Command | Effect |
-|---------|--------|
-| `/nick <name>` | Change your username |
-| `/clear` | Clear local chat history |
-| `/help` | Show command list |
+**Rate limiting:** 10 messages per 5-second window per connection. Exceeding this sends an error back to that client only.
 
 ---
 
 ## Tech Stack
 
-- **Frontend:** Vanilla HTML/CSS/JS — Apple system font, iMessage-style bubbles
-- **Backend:** Node.js + `ws` WebSocket library
-- **Hosting:** Firebase Hosting (frontend) + Railway/Render (server)
-- **Auth:** None — fully anonymous
+| Layer     | Technology                        |
+|-----------|-----------------------------------|
+| Frontend  | HTML, CSS, Vanilla JavaScript     |
+| Backend   | Node.js, ws (WebSocket library)   |
+| Hosting   | Firebase Hosting (frontend)       |
+| Server    | Render (backend WebSocket server) |
 
 ---
 
 ## License
 
-MIT
+MIT — free to use, modify, and distribute.
