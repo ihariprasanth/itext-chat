@@ -776,3 +776,263 @@ button:focus:not(:focus-visible) { outline: none; }
   background: rgba(52,199,89,0.28);
   color: var(--text-primary);
 }
+
+/* ═══════════════════════════════════════════════════════════
+   JOIN SCREEN — LOGO IMAGE
+═══════════════════════════════════════════════════════════ */
+
+.brand-logo-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.brand-icon {
+  width: 56px;
+  height: 56px;
+  background: #000;
+  border: 2px solid rgba(52,199,89,0.3);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  box-shadow: 0 0 28px rgba(52,199,89,0.4);
+}
+
+/* Center brand on join screen */
+.brand {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   JOIN SCREEN — DESKTOP LEFT PANEL
+═══════════════════════════════════════════════════════════ */
+
+#join-screen {
+  position: relative;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.join-left-panel {
+  display: none;
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: column;
+  gap: 6px;
+}
+
+.join-side-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.side-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.side-nav-item svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.side-nav-item:hover {
+  color: var(--green);
+  border-color: rgba(52,199,89,0.3);
+  background: var(--green-subtle);
+}
+
+/* Mobile about link under the card */
+.join-mobile-about {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.mobile-about-link {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  transition: color 0.15s, border-color 0.15s;
+}
+.mobile-about-link:hover {
+  color: var(--green);
+  border-color: rgba(52,199,89,0.3);
+}
+
+@media (min-width: 900px) {
+  .join-left-panel { display: flex; }
+  .join-mobile-about { display: none; }
+  .join-card { margin: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SIDEBAR — LOGO + ROOMS + ABOUT BUTTON
+═══════════════════════════════════════════════════════════ */
+
+.sidebar-logo-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  border-radius: 3px;
+}
+
+.sidebar-brand-icon {
+  background: #000;
+  border: 1px solid rgba(52,199,89,0.3);
+}
+
+/* Rooms section */
+.rooms-section {
+  padding: 16px 20px 0;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 14px;
+}
+
+.rooms-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  margin-bottom: 10px;
+}
+
+.rooms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 10px;
+}
+
+.room-chip {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+  text-align: left;
+  -webkit-appearance: none;
+}
+.room-chip:hover {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+.room-chip.active {
+  background: var(--green-subtle);
+  border-color: rgba(52,199,89,0.15);
+  color: var(--green);
+  font-weight: 600;
+}
+
+.new-room-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.new-room-row input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 7px 10px;
+  color: var(--text-primary);
+  font-family: var(--font);
+  font-size: 13px;
+  outline: none;
+  -webkit-appearance: none;
+  transition: border-color 0.2s;
+}
+.new-room-row input:focus {
+  border-color: var(--green);
+}
+.new-room-row input::placeholder { color: var(--text-tertiary); }
+
+.btn-new-room {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background: var(--green);
+  border: none;
+  border-radius: var(--r-sm);
+  color: #000;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.14s;
+  -webkit-appearance: none;
+  line-height: 1;
+}
+.btn-new-room:hover { background: #2db24f; }
+
+/* About dev button in sidebar footer */
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.btn-about-dev {
+  width: 100%;
+  padding: 10px 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  color: var(--text-tertiary);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  -webkit-appearance: none;
+}
+.btn-about-dev svg { width: 14px; height: 14px; flex-shrink: 0; }
+.btn-about-dev:hover {
+  color: var(--green);
+  border-color: rgba(52,199,89,0.3);
+  background: var(--green-subtle);
+}

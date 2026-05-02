@@ -7,9 +7,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#000000" />
   <meta name="description" content="Anonymous real-time chat. No sign-in. Just pick a name and a room." />
-  <title>itext — anonymous chat</title>
+  <title>iText — anonymous chat</title>
 
-  <!-- Favicon: simple green circle SVG -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2334c759'/><text x='50%' y='52%' dominant-baseline='middle' text-anchor='middle' font-family='-apple-system,sans-serif' font-weight='700' font-size='18' fill='%23000'>i</text></svg>" />
 
   <link rel="stylesheet" href="style.css" />
@@ -20,29 +19,39 @@
        JOIN SCREEN
   ───────────────────────────────────────────── -->
   <div id="join-screen" class="screen active">
+
+    <!-- Desktop left panel with About link -->
+    <div class="join-left-panel">
+      <nav class="join-side-nav">
+        <a href="about.html" class="side-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
+          About the Developers
+        </a>
+      </nav>
+    </div>
+
     <div class="join-card">
 
       <!-- Brand -->
       <div class="brand">
         <div class="brand-icon">
-          <!-- Message bubble icon -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-          </svg>
+          <img src="../assets/icons/icon.png" alt="iText logo" class="brand-logo-img" />
         </div>
-        <div class="brand-name"><span>i</span>text</div>
+        <div class="brand-name"><span>i</span>Text</div>
         <div class="brand-tag">anonymous · real-time · no sign-in</div>
       </div>
 
       <!-- Form -->
       <div class="join-form">
         <div class="field">
-          <label for="input-username">Your handle</label>
+          <label for="input-username">Your name</label>
           <input
             id="input-username"
             type="text"
-            placeholder="anon42"
+            placeholder="alen"
             maxlength="20"
             autocomplete="off"
             autocorrect="off"
@@ -74,6 +83,11 @@
       </div>
 
       <div id="join-error" class="join-error hidden" role="alert"></div>
+
+      <!-- Mobile About link -->
+      <div class="join-mobile-about">
+        <a href="about.html" class="mobile-about-link">About the Developers</a>
+      </div>
     </div>
   </div>
 
@@ -91,18 +105,31 @@
         <!-- Mini brand -->
         <div class="sidebar-brand">
           <div class="sidebar-brand-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-                 stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
+            <img src="../assets/icons/icon.png" alt="iText logo" class="sidebar-logo-img" />
           </div>
-          <span class="sidebar-brand-name"><span>i</span>text</span>
+          <span class="sidebar-brand-name"><span>i</span>Text</span>
         </div>
 
         <!-- Current room -->
         <div class="room-info">
           <div class="room-label">Room</div>
           <div id="room-name" class="room-name">#general</div>
+        </div>
+      </div>
+
+      <!-- Rooms section -->
+      <div class="rooms-section">
+        <div class="rooms-label">Rooms</div>
+        <div class="rooms-list" id="rooms-list">
+          <button class="room-chip active" data-room="general"># general</button>
+          <button class="room-chip" data-room="random"># random</button>
+          <button class="room-chip" data-room="dev"># dev</button>
+          <button class="room-chip" data-room="design"># design</button>
+          <button class="room-chip" data-room="lounge"># lounge</button>
+        </div>
+        <div class="new-room-row">
+          <input id="new-room-input" type="text" placeholder="new room…" maxlength="50" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" />
+          <button id="btn-new-room" class="btn-new-room" aria-label="Join room">+</button>
         </div>
       </div>
 
@@ -115,8 +142,15 @@
         <ul id="user-list" aria-label="Online users"></ul>
       </div>
 
-      <!-- Leave button -->
+      <!-- Sidebar footer -->
       <div class="sidebar-footer">
+        <a href="about.html" class="btn-about-dev">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
+          About the Developers
+        </a>
         <button id="btn-leave" class="btn-leave" aria-label="Leave room">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -171,7 +205,6 @@
           aria-label="Type a message"
         />
         <button id="btn-send" class="btn-send" aria-label="Send message">
-          <!-- Arrow-up icon — classic iMessage send -->
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <line x1="12" y1="19" x2="12" y2="5"/>

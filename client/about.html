@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#000000" />
+  <title>iText — About the Developers</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2334c759'/><text x='50%' y='52%' dominant-baseline='middle' text-anchor='middle' font-family='-apple-system,sans-serif' font-weight='700' font-size='18' fill='%23000'>i</text></svg>" />
+
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── About page specific ── */
+
+    body { overflow: auto !important; overscroll-behavior: auto; }
+
+    .about-page {
+      min-height: 100dvh;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background grid & glow — same as join screen */
+    .about-page::before {
+      content: '';
+      position: fixed;
+      top: 25%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(ellipse at center,
+        rgba(52,199,89,0.07) 0%,
+        transparent 68%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .about-page::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(52,199,89,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(52,199,89,0.025) 1px, transparent 1px);
+      background-size: 44px 44px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Top nav bar ── */
+    .about-nav {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .about-nav-back {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--green);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 7px 12px;
+      border-radius: var(--r-md);
+      border: 1px solid rgba(52,199,89,0.2);
+      background: var(--green-subtle);
+      transition: background 0.15s, border-color 0.15s;
+      flex-shrink: 0;
+    }
+    .about-nav-back:hover {
+      background: rgba(52,199,89,0.12);
+      border-color: rgba(52,199,89,0.4);
+    }
+    .about-nav-back svg { width: 14px; height: 14px; }
+
+    .about-nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      user-select: none;
+      flex: 1;
+      justify-content: center;
+    }
+    .about-nav-logo {
+      width: 28px;
+      height: 28px;
+      background: #000;
+      border: 1px solid rgba(52,199,89,0.3);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px rgba(52,199,89,0.25);
+      flex-shrink: 0;
+    }
+    .about-nav-logo img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      border-radius: 3px;
+    }
+    .about-nav-name {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      color: var(--text-primary);
+    }
+    .about-nav-name span { color: var(--green); }
+
+    /* ── Main content ── */
+    .about-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .about-header {
+      text-align: center;
+      margin-bottom: 52px;
+    }
+
+    .about-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--green-badge);
+      border: 1px solid rgba(52,199,89,0.22);
+      border-radius: var(--r-pill);
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--green);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .about-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px rgba(52,199,89,0.6);
+    }
+
+    .about-title {
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+      line-height: 1.1;
+    }
+    .about-title span { color: var(--green); }
+
+    .about-subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 420px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── Cards grid ── */
+    .dev-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      width: 100%;
+      max-width: 720px;
+    }
+
+    .dev-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 36px 30px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+      animation: cardIn 0.5s var(--ease) both;
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+      box-shadow:
+        0 0 0 1px rgba(52,199,89,0.04),
+        0 24px 56px rgba(0,0,0,0.5);
+    }
+    .dev-card:nth-child(2) { animation-delay: 0.1s; }
+
+    .dev-card::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(ellipse at center,
+        rgba(52,199,89,0.07) 0%,
+        transparent 70%);
+      pointer-events: none;
+    }
+
+    .dev-card:hover {
+      border-color: rgba(52,199,89,0.25);
+      box-shadow:
+        0 0 0 1px rgba(52,199,89,0.12),
+        0 32px 72px rgba(0,0,0,0.6),
+        0 0 60px rgba(52,199,89,0.06);
+      transform: translateY(-3px);
+    }
+
+    /* Avatar */
+    .dev-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--green-dim), var(--green));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: 700;
+      color: #000;
+      letter-spacing: -0.5px;
+      flex-shrink: 0;
+      box-shadow: 0 6px 24px rgba(52,199,89,0.3);
+      user-select: none;
+    }
+
+    .dev-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .dev-info { flex: 1; min-width: 0; }
+
+    .dev-name {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      line-height: 1.1;
+    }
+    .dev-name span { color: var(--green); }
+
+    .dev-role-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--green-badge);
+      border: 1px solid rgba(52,199,89,0.16);
+      border-radius: var(--r-pill);
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green);
+      letter-spacing: 0.04em;
+    }
+
+    /* Points */
+    .dev-points {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .dev-point {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+    .dev-point::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+      margin-top: 7px;
+      box-shadow: 0 0 5px rgba(52,199,89,0.4);
+    }
+
+    /* LinkedIn button */
+    .btn-linkedin {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 13px 20px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      color: var(--text-secondary);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background 0.15s, box-shadow 0.15s;
+      margin-top: auto;
+    }
+    .btn-linkedin svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .btn-linkedin:hover {
+      color: #0a66c2;
+      border-color: rgba(10,102,194,0.4);
+      background: rgba(10,102,194,0.06);
+      box-shadow: 0 4px 16px rgba(10,102,194,0.12);
+    }
+
+    /* ── Footer ── */
+    .about-footer {
+      text-align: center;
+      margin-top: 56px;
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+    .about-footer span { color: var(--green); }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      .about-nav { padding: 12px 16px; }
+      .about-content { padding: 40px 16px 60px; }
+      .about-title { font-size: 26px; }
+      .dev-cards { grid-template-columns: 1fr; gap: 18px; max-width: 100%; }
+      .dev-card { padding: 26px 22px 22px; border-radius: 18px; }
+      .about-header { margin-bottom: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="about-page">
+
+    <!-- Nav bar -->
+    <nav class="about-nav">
+      <a href="index.html" class="about-nav-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </a>
+
+      <a href="index.html" class="about-nav-brand">
+        <div class="about-nav-logo">
+          <img src="../assets/icons/icon.png" alt="iText logo" />
+        </div>
+        <span class="about-nav-name"><span>i</span>Text</span>
+      </a>
+
+      <!-- Spacer to balance back button -->
+      <div style="width: 80px; flex-shrink: 0;"></div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="about-content">
+
+      <div class="about-header">
+        <div class="about-badge">The Team</div>
+        <h1 class="about-title">About the <span>Developers</span></h1>
+        <p class="about-subtitle">
+          The minds behind iText — building real-time, anonymous chat with a focus on performance and beautiful experience.
+        </p>
+      </div>
+
+      <div class="dev-cards">
+
+        <!-- Developer 1 -->
+        <div class="dev-card">
+          <div class="dev-top">
+            <div class="dev-avatar">HP</div>
+            <div class="dev-info">
+              <div class="dev-name">HARIPRASANTH <span>T</span></div>
+              <div class="dev-role-tag">Lead Developer</div>
+            </div>
+          </div>
+
+          <div class="dev-points">
+            <div class="dev-point">Leads the overall development and architecture of the project.</div>
+            <div class="dev-point">Focused on integrating features and ensuring smooth functionality across the platform.</div>
+            <div class="dev-point">Drives the project vision with a strong emphasis on performance and scalability.</div>
+          </div>
+
+          <a href="https://www.linkedin.com/in/ihariprasanth/" target="_blank" rel="noopener noreferrer" class="btn-linkedin">
+            <!-- LinkedIn icon -->
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+            Connect on LinkedIn
+          </a>
+        </div>
+
+        <!-- Developer 2 -->
+        <div class="dev-card">
+          <div class="dev-top">
+            <div class="dev-avatar">SS</div>
+            <div class="dev-info">
+              <div class="dev-name">SATHIYAPRIYA <span>S</span></div>
+              <div class="dev-role-tag">Frontend Developer</div>
+            </div>
+          </div>
+
+          <div class="dev-points">
+            <div class="dev-point">Handles the complete front-end development of the website.</div>
+            <div class="dev-point">Designs intuitive and user-friendly interfaces for a seamless user experience.</div>
+            <div class="dev-point">Brings ideas to life with clean, responsive, and visually appealing UI.</div>
+          </div>
+
+          <a href="https://www.linkedin.com/in/sathiyapriya29/" target="_blank" rel="noopener noreferrer" class="btn-linkedin">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+            Connect on LinkedIn
+          </a>
+        </div>
+
+      </div>
+
+      <div class="about-footer">
+        Built with ❤ using <span>iText</span> — anonymous · real-time · no sign-in
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

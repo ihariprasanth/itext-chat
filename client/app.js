@@ -445,3 +445,75 @@ function beep() {
     o.stop(_audio.currentTime + 0.18);
   } catch { /* Audio blocked or unavailable */ }
 }
+
+// ─── MULTIPLE ROOMS ───────────────────────────────────────────────────────
+
+(function initRooms() {
+  const roomsList = document.getElementById('rooms-list');
+  const newRoomInput = document.getElementById('new-room-input');
+  const btnNewRoom = document.getElementById('btn-new-room');
+
+  if (!roomsList) return;
+
+  function switchRoom(roomName) {
+    if (!state.username) return; // not joined yet
+    const clean = roomName.trim().replace(/\s+/g, '-').toLowerCase();
+    if (!clean) return;
+
+    // Update active chip
+    roomsList.querySelectorAll('.room-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.room === clean);
+    });
+
+    // Rejoin via WebSocket
+    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+      wsSend({ type: 'join_room', username: state.username, room: clean });
+      state.room = clean;
+      const tag = `#${clean}`;
+      const roomNameEl = document.getElementById('room-name');
+      const headerRoomEl = document.getElementById('header-room-name');
+      if (roomNameEl) roomNameEl.textContent = tag;
+      if (headerRoomEl) headerRoomEl.textContent = tag;
+      document.title = `${tag} — iText`;
+      const messagesEl = document.getElementById('messages');
+      if (messagesEl) {
+        messagesEl.innerHTML = '';
+        state.lastSenderId = null;
+      }
+      addSystem(`Switched to room "${clean}"`);
+    }
+  }
+
+  roomsList.addEventListener('click', e => {
+    const chip = e.target.closest('.room-chip');
+    if (!chip) return;
+    switchRoom(chip.dataset.room);
+    closeSidebar();
+  });
+
+  function addAndSwitchRoom() {
+    const val = newRoomInput.value.trim().replace(/\s+/g, '-').toLowerCase();
+    if (!val) return;
+
+    // Add chip if not exists
+    const existing = roomsList.querySelector(`[data-room="${val}"]`);
+    if (!existing) {
+      const btn = document.createElement('button');
+      btn.className = 'room-chip';
+      btn.dataset.room = val;
+      btn.textContent = `# ${val}`;
+      roomsList.appendChild(btn);
+    }
+
+    newRoomInput.value = '';
+    switchRoom(val);
+    closeSidebar();
+  }
+
+  if (btnNewRoom) btnNewRoom.addEventListener('click', addAndSwitchRoom);
+  if (newRoomInput) {
+    newRoomInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') addAndSwitchRoom();
+    });
+  }
+})();
