@@ -244,6 +244,9 @@ function openChatScreen(data) {
   headerRoomEl.textContent = tag;
   document.title           = `${tag} — itext`;
 
+  // Add chip for the joined room
+  if (typeof window._addRoomChip === 'function') window._addRoomChip(data.room);
+
   renderUserList(data.users || []);
 
   const fresh = (data.users || []).length <= 1;
@@ -455,17 +458,32 @@ function beep() {
 
   if (!roomsList) return;
 
+  function getOrCreateChip(roomName) {
+    let chip = roomsList.querySelector(`[data-room="${roomName}"]`);
+    if (!chip) {
+      chip = document.createElement('button');
+      chip.className = 'room-chip';
+      chip.dataset.room = roomName;
+      chip.textContent = `# ${roomName}`;
+      roomsList.appendChild(chip);
+    }
+    return chip;
+  }
+
+  function setActiveChip(roomName) {
+    roomsList.querySelectorAll('.room-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.room === roomName);
+    });
+  }
+
   function switchRoom(roomName) {
-    if (!state.username) return; // not joined yet
+    if (!state.username) return;
     const clean = roomName.trim().replace(/\s+/g, '-').toLowerCase();
     if (!clean) return;
 
-    // Update active chip
-    roomsList.querySelectorAll('.room-chip').forEach(c => {
-      c.classList.toggle('active', c.dataset.room === clean);
-    });
+    getOrCreateChip(clean);
+    setActiveChip(clean);
 
-    // Rejoin via WebSocket
     if (state.ws && state.ws.readyState === WebSocket.OPEN) {
       wsSend({ type: 'join_room', username: state.username, room: clean });
       state.room = clean;
@@ -484,6 +502,12 @@ function beep() {
     }
   }
 
+  // Expose so openChatScreen can add the chip for the initial joined room
+  window._addRoomChip = function(roomName) {
+    getOrCreateChip(roomName);
+    setActiveChip(roomName);
+  };
+
   roomsList.addEventListener('click', e => {
     const chip = e.target.closest('.room-chip');
     if (!chip) return;
@@ -494,17 +518,6 @@ function beep() {
   function addAndSwitchRoom() {
     const val = newRoomInput.value.trim().replace(/\s+/g, '-').toLowerCase();
     if (!val) return;
-
-    // Add chip if not exists
-    const existing = roomsList.querySelector(`[data-room="${val}"]`);
-    if (!existing) {
-      const btn = document.createElement('button');
-      btn.className = 'room-chip';
-      btn.dataset.room = val;
-      btn.textContent = `# ${val}`;
-      roomsList.appendChild(btn);
-    }
-
     newRoomInput.value = '';
     switchRoom(val);
     closeSidebar();
