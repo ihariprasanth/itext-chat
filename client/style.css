@@ -895,7 +895,8 @@ html, body {
   min-height: 40px;
   max-height: 120px;
   background: var(--glass-2);
-  border: 1px solid var(--glass-border);
+  border: none;
+  box-shadow: inset 0 0 0 1px var(--glass-border);
   border-radius: var(--r-xl);
   padding: 9px 14px;
   font-family: var(--font);
@@ -909,9 +910,8 @@ html, body {
 }
 #msg-input::placeholder { color: var(--text-4); }
 #msg-input:focus {
-  border-color: rgba(52,199,89,0.4);
+  box-shadow: inset 0 0 0 1px rgba(52,199,89,0.4), 0 0 0 3px var(--green-glow2);
   background: rgba(52,199,89,0.04);
-  box-shadow: 0 0 0 3px var(--green-glow2);
 }
 
 /* Floating send button — elevated, separated */
