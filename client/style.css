@@ -307,6 +307,7 @@ html, body {
   transform: translateX(-100%);
   transition: transform 0.3s var(--ease), box-shadow 0.3s;
   padding-top: var(--safe-top);
+  overflow: hidden;
 }
 
 #sidebar.open {
@@ -386,9 +387,9 @@ html, body {
 
 /* Rooms section */
 .rooms-section {
-  padding: 20px;
-  padding-right: 16px;
+  padding: 16px 16px 16px 20px;
   border-bottom: 1px solid var(--glass-border);
+  overflow: hidden;
 }
 .rooms-label {
   font-size: 11px; font-weight: 600; color: var(--text-3);
@@ -412,15 +413,16 @@ html, body {
 .room-item-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .room-item-count { font-size: 11px; color: var(--text-3); flex-shrink: 0; margin-left: 8px; }
 
-.new-room-row { display: flex; gap: 8px; overflow: hidden; }
+.new-room-row { display: flex; gap: 6px; width: 100%; min-width: 0; }
 .new-room-row input {
   flex: 1;
-  height: 38px;
+  min-width: 0;
+  height: 36px;
   background: var(--glass-2);
   border: 1px solid var(--glass-border);
   border-radius: var(--r-sm);
-  padding: 0 12px;
-  font-size: 14px;
+  padding: 0 10px;
+  font-size: 13px;
   color: var(--text-1);
   outline: none;
   font-family: var(--font);
@@ -430,7 +432,8 @@ html, body {
 .new-room-row input:focus { border-color: var(--green); background: rgba(52,199,89,0.05); }
 
 .btn-new-room {
-  width: 38px; height: 38px;
+  width: 36px; height: 36px;
+  min-width: 36px;
   background: var(--green);
   color: #000;
   border: none;
@@ -847,8 +850,8 @@ html, body {
   display: flex;
   align-items: flex-end;
   gap: 8px;
-  padding: 8px 12px;
-  padding-bottom: calc(8px + var(--safe-bottom));
+  padding: 10px 14px;
+  padding-bottom: calc(10px + var(--safe-bottom));
   background: var(--glass-1);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -862,10 +865,11 @@ html, body {
   flex: 1;
   align-items: flex-end;
   min-width: 0;
+  gap: 8px;
 }
 
 .btn-attach {
-  width: 44px; height: 44px;
+  width: 40px; height: 40px;
   background: var(--glass-2);
   border: 1px solid var(--glass-border);
   border-radius: var(--r-md);
@@ -877,17 +881,16 @@ html, body {
 }
 .btn-attach:hover { background: var(--glass-3); color: var(--text-1); }
 .btn-attach:active { transform: scale(0.95); }
-.btn-attach svg { width: 20px; height: 20px; }
+.btn-attach svg { width: 18px; height: 18px; }
 
 #msg-input {
   flex: 1;
-  min-height: 44px;
-  max-height: 140px;
+  min-height: 40px;
+  max-height: 120px;
   background: var(--glass-2);
   border: 1px solid var(--glass-border);
-  border-right: none;
-  border-radius: var(--r-xl) 0 0 var(--r-xl);
-  padding: 11px 16px;
+  border-radius: var(--r-xl);
+  padding: 9px 14px;
   font-family: var(--font);
   font-size: 15px;
   color: var(--text-1);
@@ -905,10 +908,10 @@ html, body {
 }
 
 .btn-send {
-  width: 44px; height: 44px;
+  width: 40px; height: 40px;
   background: linear-gradient(135deg, var(--green) 0%, var(--green-dim) 100%);
   border: none;
-  border-radius: 0 var(--r-md) var(--r-md) 0;
+  border-radius: var(--r-md);
   color: #000;
   cursor: pointer;
   flex-shrink: 0;
