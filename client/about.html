@@ -14,52 +14,39 @@
   <style>
     /* ── About page specific ── */
 
-    body { overflow: auto !important; overscroll-behavior: auto; }
+    html, body { overflow: auto !important; overscroll-behavior: auto; height: auto !important; }
 
     .about-page {
       min-height: 100dvh;
-      background: var(--bg);
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -20%, rgba(52,199,89,0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(52,199,89,0.07) 0%, transparent 60%),
+        var(--bg);
       display: flex;
       flex-direction: column;
       position: relative;
-      overflow: hidden;
     }
 
-    /* Background grid & glow — same as join screen */
+    /* Diagonal grid overlay — same as login */
     .about-page::before {
       content: '';
       position: fixed;
-      top: 25%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 800px;
-      height: 800px;
-      background: radial-gradient(ellipse at center,
-        rgba(52,199,89,0.07) 0%,
-        transparent 68%);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .about-page::after {
-      content: '';
-      position: fixed;
       inset: 0;
-      background-image:
-        linear-gradient(rgba(52,199,89,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(52,199,89,0.025) 1px, transparent 1px);
-      background-size: 44px 44px;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 60L60 0' stroke='rgba(255,255,255,0.015)' stroke-width='1'/%3E%3C/svg%3E");
       pointer-events: none;
       z-index: 0;
     }
+
+    .about-page::after { display: none; }
 
     /* ── Top nav bar ── */
     .about-nav {
       display: flex;
       align-items: center;
       gap: 14px;
-      padding: 14px 28px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(0,0,0,0.85);
+      padding: 12px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.6);
       backdrop-filter: blur(20px) saturate(180%);
       -webkit-backdrop-filter: blur(20px) saturate(180%);
       position: sticky;
@@ -130,7 +117,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px 20px 80px;
+      padding: 32px 20px 80px;
       position: relative;
       z-index: 1;
     }
@@ -346,7 +333,7 @@
 
     /* ── Responsive ── */
     @media (max-width: 700px) {
-      .about-nav { padding: 12px 16px; }
+      .about-nav { padding: 10px 14px; }
       .about-content { padding: 20px 16px 60px; }
       .about-title { font-size: 26px; }
       .dev-cards { grid-template-columns: 1fr; gap: 18px; max-width: 100%; }
