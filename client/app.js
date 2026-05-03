@@ -11,8 +11,13 @@
 const CONSEC_MS         = 60_000;   // group consecutive msgs within 1 min
 const MAX_FILE_MB       = 10;
 const PING_INTERVAL_MS  = 25_000;
-const RECONNECT_DELAYS  = [1000, 2000, 4000, 8000, 16000];
+const RECONNECT_DELAYS  = [2000, 4000, 8000, 15000, 30000]; // longer — handles Render cold-start
 const REACTIONS         = ["👍","❤️","😂","😮","😢","🔥","👏","🎉","💯","😎"];
+
+// ─── SERVER URL ───────────────────────────────────────────────────────────
+// Static client is on Firebase; WebSocket server is on Render.
+// Change this if you self-host everything on the same origin.
+const WS_SERVER = "wss://itext-chat.onrender.com";
 
 // ─── STATE ────────────────────────────────────────────────────────────────
 
@@ -179,9 +184,16 @@ function connect(username, room) {
   state.manualClose = false;
   clearTimeout(state.reconnectTimer);
 
-  const proto = location.protocol === "https:" ? "wss:" : "ws:";
-  const ws    = new WebSocket(`${proto}//${location.host}`);
-  state.ws    = ws;
+  // Always connect to the Render WebSocket server.
+  // Firebase only hosts static files — it does NOT proxy WebSockets.
+  const ws = new WebSocket(WS_SERVER);
+  state.ws = ws;
+
+  // Show a connecting status so user knows it's working
+  if (state.reconnectCount === 0) {
+    connStatus.textContent = "Connecting…";
+    connStatus.classList.add("visible");
+  }
 
   ws.addEventListener("open", () => {
     state.reconnectCount = 0;
@@ -207,15 +219,21 @@ function connect(username, room) {
     if (!state.manualClose) scheduleReconnect();
   });
 
-  ws.addEventListener("error", () => {}); // close event handles it
+  ws.addEventListener("error", () => {}); // close event fires right after, handles it
 }
 
 function scheduleReconnect() {
   if (state.manualClose) return;
   const delay = RECONNECT_DELAYS[Math.min(state.reconnectCount, RECONNECT_DELAYS.length - 1)];
   state.reconnectCount++;
-  connStatus.textContent = `Reconnecting in ${delay / 1000}s…`;
+
+  // First few attempts: Render free tier may be cold-starting (takes ~30s)
+  const isColdStart = state.reconnectCount <= 3;
+  connStatus.textContent = isColdStart
+    ? `Server waking up… retrying in ${delay / 1000}s`
+    : `Reconnecting in ${delay / 1000}s…`;
   connStatus.classList.add("visible");
+
   state.reconnectTimer = setTimeout(() => connect(), delay);
 }
 
@@ -868,10 +886,14 @@ function handleError(msg) {
 
     connect(username, room);
 
+    // Re-enable after 8s in case server is cold-starting (Render free tier ~30s wake)
+    // The 'joined' event will switch the screen; this just unblocks the button if it fails
     setTimeout(() => {
-      btnJoin.disabled    = false;
-      btnJoin.textContent = "Join Room →";
-    }, 4000);
+      if (joinScreen.classList.contains("active")) {
+        btnJoin.disabled    = false;
+        btnJoin.textContent = "Join Room →";
+      }
+    }, 8000);
   }
 
   function showJoinError(msg) {
