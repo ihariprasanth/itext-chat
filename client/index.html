@@ -6,166 +6,287 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#000000" />
-  <meta name="description" content="Anonymous real-time chat. No sign-in. Just pick a name and a room." />
-  <title>iText — anonymous chat</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2334c759'/><text x='50%' y='52%' dominant-baseline='middle' text-anchor='middle' font-family='-apple-system,sans-serif' font-weight='700' font-size='18' fill='%23000'>i</text></svg>" />
+  <meta name="description" content="iText Chat — Anonymous real-time chat. No sign-in. Media sharing, reactions, replies." />
+  <title>iText Chat</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2334c759'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-family='-apple-system,sans-serif' font-weight='700' font-size='18' fill='%23000'>i</text></svg>" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- JOIN SCREEN -->
+  <!-- ╔══════════════════════════════════════════════╗
+       ║              JOIN SCREEN                    ║
+       ╚══════════════════════════════════════════════╝ -->
   <div id="join-screen" class="screen active">
+
+    <!-- Desktop left panel -->
     <div class="join-left-panel">
       <nav class="join-side-nav">
         <a href="about.html" class="side-nav-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
           About the Developers
         </a>
       </nav>
     </div>
+
     <div class="join-card">
+
+      <!-- Brand — name only, no icon -->
       <div class="brand">
-        <div class="brand-icon">
-          <img src="assets/icons/icon.png" alt="iText logo" class="brand-logo-img" />
-        </div>
-        <div class="brand-name"><span>i</span>Text</div>
-        <div class="brand-tag">anonymous · real-time · no sign-in</div>
+        <div class="brand-name"><span>i</span>Text Chat</div>
+        <div class="brand-tag">anonymous · real-time · media sharing · no sign-in</div>
       </div>
+
+      <!-- Form -->
       <div class="join-form">
         <div class="field">
           <label for="input-username">Your name</label>
-          <input id="input-username" type="text" placeholder="alen" maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" inputmode="text" />
+          <input
+            id="input-username"
+            type="text"
+            placeholder="alen"
+            maxlength="20"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="none"
+            spellcheck="false"
+            inputmode="text"
+          />
         </div>
+
         <div class="field">
           <label for="input-room">Room name</label>
-          <input id="input-room" type="text" placeholder="coffee-lounge" maxlength="50" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" inputmode="text" />
-          <span class="field-hint">Room is created if it doesn't exist — share the URL to invite anyone</span>
+          <input
+            id="input-room"
+            type="text"
+            placeholder="coffee-lounge"
+            maxlength="50"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="none"
+            spellcheck="false"
+            inputmode="text"
+          />
+          <span class="field-hint">Created if it doesn't exist — max 100 people per room</span>
         </div>
+
         <button id="btn-join" class="btn-primary">Join Room →</button>
       </div>
+
       <div id="join-error" class="join-error hidden" role="alert"></div>
+
+      <!-- Mobile About link -->
       <div class="join-mobile-about">
         <a href="about.html" class="mobile-about-link">About the Developers</a>
       </div>
     </div>
   </div>
 
-  <!-- CHAT SCREEN -->
-  <div id="chat-screen" class="screen" style="position:relative;">
+  <!-- ╔══════════════════════════════════════════════╗
+       ║              CHAT SCREEN                    ║
+       ╚══════════════════════════════════════════════╝ -->
+  <div id="chat-screen" class="screen">
 
     <div id="sidebar-backdrop" class="sidebar-backdrop" aria-hidden="true"></div>
 
+    <!-- ── Sidebar ── -->
     <aside id="sidebar" aria-label="Room info and users">
       <div class="sidebar-top">
+        <!-- Brand in sidebar -->
         <div class="sidebar-brand">
-          <div class="sidebar-brand-icon"><img src="assets/icons/icon.png" alt="iText logo" class="sidebar-logo-img" /></div>
-          <span class="sidebar-brand-name"><span>i</span>Text</span>
+          <div class="sidebar-brand-icon" aria-hidden="true">
+            <img src="assets/icons/icon.png" alt="" class="sidebar-logo-img"
+              onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-weight:700;color:#000;font-size:16px\'>i</span>'" />
+          </div>
+          <span class="sidebar-brand-name"><span>i</span>Text Chat</span>
         </div>
+
+        <!-- Current room + capacity -->
         <div class="room-info">
           <div class="room-label">Current Room</div>
           <div id="room-name" class="room-name">#general</div>
-          <div class="member-bar">
-            <div class="member-bar-track"><div class="member-bar-fill" id="member-bar-fill" style="width:2%"></div></div>
-            <span class="member-bar-label" id="member-bar-label">2 / 100</span>
+          <div class="room-capacity">
+            <div class="capacity-label">
+              <span id="cap-text">0 / 100 members</span>
+              <span id="cap-pct">0%</span>
+            </div>
+            <div class="capacity-bar">
+              <div class="capacity-fill" id="cap-fill" style="width:0%"></div>
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- Rooms list -->
       <div class="rooms-section">
         <div class="rooms-label">Rooms</div>
         <div class="rooms-list" id="rooms-list"></div>
         <div class="new-room-row">
-          <input id="new-room-input" type="text" placeholder="new room…" maxlength="50" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" />
+          <input id="new-room-input" type="text" placeholder="new room…" maxlength="50"
+            autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" />
           <button id="btn-new-room" class="btn-new-room" aria-label="Join room">+</button>
         </div>
       </div>
 
+      <!-- User list -->
       <div class="users-section">
-        <div class="users-label">Online <span id="user-count" class="badge">0</span></div>
+        <div class="users-label">
+          Online
+          <span id="user-count" class="badge">0</span>
+        </div>
         <ul id="user-list" aria-label="Online users"></ul>
       </div>
 
+      <!-- Sidebar footer -->
       <div class="sidebar-footer">
         <a href="about.html" class="btn-about-dev">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-          About the Developers
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
+          About Developers
         </a>
         <button id="btn-leave" class="btn-leave" aria-label="Leave room">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
           Leave Room
         </button>
       </div>
     </aside>
 
+    <!-- ── Main chat area ── -->
     <main id="chat-main">
+
+      <!-- Header -->
       <header id="chat-header">
         <button id="btn-sidebar-toggle" class="sidebar-toggle" aria-label="Open sidebar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="6"  x2="21" y2="6"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
         </button>
+
         <div class="header-room">
           <span id="header-room-name" class="header-room-name">#general</span>
-          <span class="live-dot" aria-label="Live" title="Connected"></span>
+          <span class="live-dot" id="live-dot" aria-label="Connected"></span>
         </div>
+
         <div id="header-user-count" class="header-count">0 online</div>
       </header>
 
+      <!-- Messages -->
       <div id="messages" class="messages" role="log" aria-live="polite" aria-atomic="false"></div>
+
+      <!-- Typing bar -->
       <div id="typing-bar" class="typing-bar" aria-live="polite" aria-atomic="true"></div>
 
-      <!-- Input row: attach | message input | send — NO emoji, NO separator -->
-      <div class="input-area">
-        <button id="btn-attach" class="btn-attach" aria-label="Attach file" aria-expanded="false">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+      <!-- Reply bar -->
+      <div id="reply-bar">
+        <div class="reply-bar-preview" id="reply-preview-text">Replying to…</div>
+        <button class="reply-bar-cancel" id="btn-cancel-reply" title="Cancel reply">✕</button>
+      </div>
+
+      <!-- Input area -->
+      <div class="input-area" style="position:relative">
+
+        <!-- Attach menu -->
+        <div id="attach-menu">
+          <button class="attach-item" id="attach-image">
+            <span class="attach-item-icon">🖼</span> Photo / Image
+          </button>
+          <button class="attach-item" id="attach-video">
+            <span class="attach-item-icon">🎬</span> Video
+          </button>
+          <button class="attach-item" id="attach-audio">
+            <span class="attach-item-icon">🎵</span> Audio
+          </button>
+          <button class="attach-item" id="attach-doc">
+            <span class="attach-item-icon">📎</span> Document / PDF
+          </button>
+        </div>
+
+        <!-- Hidden file inputs -->
+        <input type="file" id="file-input-image" accept="image/*" />
+        <input type="file" id="file-input-video" accept="video/*" />
+        <input type="file" id="file-input-audio" accept="audio/*" />
+        <input type="file" id="file-input-doc"   accept=".pdf,.txt,.csv,.zip" />
+
+        <!-- Upload progress -->
+        <div class="upload-progress" id="upload-progress">
+          <div class="upload-progress-bar" id="upload-progress-bar" style="width:0%"></div>
+        </div>
+
+        <button class="btn-attach" id="btn-attach" aria-label="Attach file">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+          </svg>
         </button>
-        <input id="msg-input" type="text" placeholder="Message… or /help" maxlength="500" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" aria-label="Type a message" />
+
+        <textarea
+          id="msg-input"
+          placeholder="Message… or /help"
+          maxlength="2000"
+          rows="1"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="sentences"
+          spellcheck="false"
+          aria-label="Type a message"
+        ></textarea>
+
         <button id="btn-send" class="btn-send" aria-label="Send message">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="19" x2="12" y2="5"/>
+            <polyline points="5 12 12 5 19 12"/>
+          </svg>
         </button>
       </div>
-
-      <!-- Attach menu — blurred backdrop, NO emojis -->
-      <div id="attach-menu" class="attach-menu hidden" role="menu" aria-label="Attach file">
-        <button class="attach-item" role="menuitem" data-type="photo">
-          <span class="attach-icon photo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          </span>
-          Photo / Image
-        </button>
-        <button class="attach-item" role="menuitem" data-type="video">
-          <span class="attach-icon video">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-          </span>
-          Video
-        </button>
-        <button class="attach-item" role="menuitem" data-type="audio">
-          <span class="attach-icon audio">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-          </span>
-          Audio
-        </button>
-        <button class="attach-item" role="menuitem" data-type="document">
-          <span class="attach-icon doc">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          </span>
-          Document / PDF
-        </button>
-      </div>
-
     </main>
   </div>
 
-  <!-- HELP OVERLAY -->
+  <!-- ╔══════════════════════════════════════════════╗
+       ║              HELP OVERLAY                   ║
+       ╚══════════════════════════════════════════════╝ -->
   <div id="help-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="help-title">
     <div class="overlay-card">
       <h2 id="help-title">Commands</h2>
       <ul class="cmd-list">
-        <li><code>/nick &lt;name&gt;</code> Change your username</li>
-        <li><code>/clear</code> Clear your local chat history</li>
-        <li><code>/help</code> Show this dialog</li>
+        <li><code>/nick &lt;name&gt;</code><span>Change your username</span></li>
+        <li><code>/clear</code><span>Clear your local chat history</span></li>
+        <li><code>/help</code><span>Show this dialog</span></li>
       </ul>
+      <div class="help-features">
+        <p><strong>📎 Media sharing:</strong> Tap the paperclip to share images, videos, audio, and documents up to 10 MB.</p>
+        <p><strong>😊 Reactions:</strong> Long-press or hover on any message to react with an emoji.</p>
+        <p><strong>↩ Reply:</strong> Hover or long-press a message and tap the reply icon.</p>
+        <p><strong>🔄 Auto-reconnect:</strong> Automatically reconnects if the connection drops.</p>
+      </div>
       <button class="btn-close" id="btn-close-help">Close</button>
     </div>
   </div>
+
+  <!-- Image lightbox -->
+  <div id="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
+    <img id="lightbox-img" src="" alt="Full size preview" />
+  </div>
+
+  <!-- Reaction picker -->
+  <div id="reaction-picker" class="reaction-picker" style="display:none"></div>
+
+  <!-- Toast notifications -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- Connection status banner -->
+  <div id="conn-status" aria-live="assertive">Reconnecting…</div>
 
   <script src="app.js"></script>
 </body>
