@@ -387,6 +387,7 @@ html, body {
 /* Rooms section */
 .rooms-section {
   padding: 20px;
+  padding-right: 16px;
   border-bottom: 1px solid var(--glass-border);
 }
 .rooms-label {
@@ -411,7 +412,7 @@ html, body {
 .room-item-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .room-item-count { font-size: 11px; color: var(--text-3); flex-shrink: 0; margin-left: 8px; }
 
-.new-room-row { display: flex; gap: 8px; }
+.new-room-row { display: flex; gap: 8px; overflow: hidden; }
 .new-room-row input {
   flex: 1;
   height: 38px;
@@ -855,6 +856,14 @@ html, body {
   flex-shrink: 0;
 }
 
+/* Wrap textarea + send together with no gap */
+.input-compose {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  min-width: 0;
+}
+
 .btn-attach {
   width: 44px; height: 44px;
   background: var(--glass-2);
@@ -876,7 +885,8 @@ html, body {
   max-height: 140px;
   background: var(--glass-2);
   border: 1px solid var(--glass-border);
-  border-radius: var(--r-xl);
+  border-right: none;
+  border-radius: var(--r-xl) 0 0 var(--r-xl);
   padding: 11px 16px;
   font-family: var(--font);
   font-size: 15px;
@@ -898,7 +908,7 @@ html, body {
   width: 44px; height: 44px;
   background: linear-gradient(135deg, var(--green) 0%, var(--green-dim) 100%);
   border: none;
-  border-radius: var(--r-md);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
   color: #000;
   cursor: pointer;
   flex-shrink: 0;
@@ -923,13 +933,13 @@ html, body {
   position: absolute;
   bottom: calc(100% + 8px);
   left: 12px;
-  background: var(--glass-1);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  background: rgba(10,10,10,0.75);
+  backdrop-filter: blur(40px) saturate(2);
+  -webkit-backdrop-filter: blur(40px) saturate(2);
   border: 1px solid var(--glass-border);
   border-radius: var(--r-xl);
   padding: 8px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.7);
   z-index: 50;
   animation: menuIn 0.2s var(--spring) both;
 }

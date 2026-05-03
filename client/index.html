@@ -96,10 +96,6 @@
       <div class="sidebar-top">
         <!-- Brand in sidebar -->
         <div class="sidebar-brand">
-          <div class="sidebar-brand-icon" aria-hidden="true">
-            <img src="assets/icons/icon.png" alt="" class="sidebar-logo-img"
-              onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-weight:700;color:#000;font-size:16px\'>i</span>'" />
-          </div>
           <span class="sidebar-brand-name"><span>i</span>Text Chat</span>
         </div>
 
@@ -198,18 +194,10 @@
 
         <!-- Attach menu -->
         <div id="attach-menu">
-          <button class="attach-item" id="attach-image">
-            <span class="attach-item-icon">🖼</span> Photo / Image
-          </button>
-          <button class="attach-item" id="attach-video">
-            <span class="attach-item-icon">🎬</span> Video
-          </button>
-          <button class="attach-item" id="attach-audio">
-            <span class="attach-item-icon">🎵</span> Audio
-          </button>
-          <button class="attach-item" id="attach-doc">
-            <span class="attach-item-icon">📎</span> Document / PDF
-          </button>
+          <button class="attach-item" id="attach-image">Photo / Image</button>
+          <button class="attach-item" id="attach-video">Video</button>
+          <button class="attach-item" id="attach-audio">Audio</button>
+          <button class="attach-item" id="attach-doc">Document / PDF</button>
         </div>
 
         <!-- Hidden file inputs -->
@@ -230,6 +218,7 @@
           </svg>
         </button>
 
+        <div class="input-compose">
         <textarea
           id="msg-input"
           placeholder="Message… or /help"
@@ -249,6 +238,7 @@
             <polyline points="5 12 12 5 19 12"/>
           </svg>
         </button>
+        </div>
       </div>
     </main>
   </div>

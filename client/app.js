@@ -385,7 +385,6 @@ function appendMessage(msg) {
     <div class="msg-reactions" id="reactions-${esc(msgId)}"></div>
     ${isSelf ? `<div class="msg-read" id="read-${esc(msgId)}">✓ Sent</div>` : ""}
     <div class="msg-actions">
-      <button class="msg-action-btn" data-action="react" data-msg-id="${esc(msgId)}" title="React">😊</button>
       <button class="msg-action-btn" data-action="reply" data-msg-id="${esc(msgId)}" data-username="${esc(username)}" data-text="${esc(text)}" title="Reply">↩</button>
     </div>
   `;
@@ -451,7 +450,7 @@ function appendMedia(msg) {
     ${mediaHTML}
     <div class="msg-reactions" id="reactions-${esc(msgId)}"></div>
     <div class="msg-actions">
-      <button class="msg-action-btn" data-action="react" data-msg-id="${esc(msgId)}" title="React">😊</button>
+      <button class="msg-action-btn" data-action="reply" data-msg-id="${esc(msgId)}" data-username="${esc(username)}" data-text="[${mediaType}]" title="Reply">↩</button>
     </div>
   `;
 
