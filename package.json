@@ -1,7 +1,7 @@
 {
-  "name": "itext",
-  "version": "1.0.0",
-  "description": "Anonymous real-time chat — no signup, no database",
+  "name": "itext-chat",
+  "version": "2.0.0",
+  "description": "iText Chat — Anonymous real-time chat with media sharing, reactions, replies, and 100-user room cap",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
