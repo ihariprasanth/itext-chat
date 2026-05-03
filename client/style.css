@@ -537,6 +537,19 @@ html, body {
   min-width: 0;
   height: 100dvh;
   position: relative;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(52,199,89,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 90%, rgba(52,199,89,0.06) 0%, transparent 60%),
+    var(--bg);
+}
+
+#chat-main::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 60L60 0' stroke='rgba(255,255,255,0.015)' stroke-width='1'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* ── Header ── */
@@ -553,6 +566,7 @@ html, body {
   gap: 12px;
   flex-shrink: 0;
   z-index: 10;
+  position: relative;
 }
 
 .sidebar-toggle {
@@ -603,6 +617,8 @@ html, body {
   flex-direction: column;
   gap: 2px;
   scroll-behavior: smooth;
+  position: relative;
+  z-index: 1;
 }
 
 /* System messages */
@@ -857,6 +873,8 @@ html, body {
   -webkit-backdrop-filter: var(--glass-blur);
   border-top: 1px solid var(--glass-border);
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 }
 
 /* Wrap textarea + send together with no gap */
@@ -865,7 +883,7 @@ html, body {
   flex: 1;
   align-items: flex-end;
   min-width: 0;
-  gap: 8px;
+  gap: 10px;
 }
 
 .btn-attach {
