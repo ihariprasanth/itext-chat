@@ -537,19 +537,7 @@ html, body {
   min-width: 0;
   height: 100dvh;
   position: relative;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(52,199,89,0.13) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 40% at 80% 90%, rgba(52,199,89,0.06) 0%, transparent 60%),
-    var(--bg);
-}
-
-#chat-main::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 60L60 0' stroke='rgba(255,255,255,0.015)' stroke-width='1'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
+  background: var(--bg);
 }
 
 /* ── Header ── */
@@ -865,7 +853,7 @@ html, body {
 .input-area {
   display: flex;
   align-items: flex-end;
-  gap: 8px;
+  gap: 10px;
   padding: 10px 14px;
   padding-bottom: calc(10px + var(--safe-bottom));
   background: var(--glass-1);
@@ -877,7 +865,7 @@ html, body {
   z-index: 1;
 }
 
-/* Wrap textarea + send together with no gap */
+/* Wrap textarea + send with explicit gap */
 .input-compose {
   display: flex;
   flex: 1;
@@ -903,6 +891,7 @@ html, body {
 
 #msg-input {
   flex: 1;
+  max-width: calc(100% - 60px);
   min-height: 40px;
   max-height: 120px;
   background: var(--glass-2);
@@ -925,28 +914,30 @@ html, body {
   box-shadow: 0 0 0 3px var(--green-glow2);
 }
 
+/* Floating send button — elevated, separated */
 .btn-send {
-  width: 40px; height: 40px;
+  width: 44px; height: 44px;
   background: linear-gradient(135deg, var(--green) 0%, var(--green-dim) 100%);
   border: none;
-  border-radius: var(--r-md);
+  border-radius: 50%;
   color: #000;
   cursor: pointer;
   flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   transition: transform 0.15s var(--spring), box-shadow 0.15s, opacity 0.15s;
-  box-shadow: 0 2px 12px rgba(52,199,89,0.35);
+  box-shadow: 0 4px 18px rgba(52,199,89,0.5), 0 2px 6px rgba(0,0,0,0.4);
   position: relative;
   overflow: hidden;
+  margin-bottom: 0;
 }
 .btn-send::after {
   content: '';
   position: absolute; inset: 0;
   background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 60%);
 }
-.btn-send:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(52,199,89,0.5); }
-.btn-send:active { transform: scale(0.95); }
-.btn-send svg { width: 20px; height: 20px; position: relative; z-index: 1; }
+.btn-send:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(52,199,89,0.65), 0 2px 8px rgba(0,0,0,0.4); }
+.btn-send:active { transform: scale(0.93); }
+.btn-send svg { width: 18px; height: 18px; position: relative; z-index: 1; }
 
 /* ── Attachment menu ── */
 #attach-menu {
