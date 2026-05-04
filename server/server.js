@@ -253,6 +253,8 @@ function handleMedia(socketId, ws, data) {
     "application/zip","application/x-zip-compressed",
     "video/mp4","video/webm",
     "audio/mpeg","audio/ogg","audio/wav",
+    "audio/mp4","audio/aac","audio/webm","audio/x-m4a","audio/flac",
+    "audio/ogg; codecs=opus","audio/ogg;codecs=opus",
   ];
 
   if (!allowed.includes(mimeType)) {

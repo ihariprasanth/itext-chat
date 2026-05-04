@@ -113,6 +113,7 @@ function fileIcon(mimeType) {
 function mediaCat(mimeType) {
   if (mimeType?.startsWith("image/")) return "image";
   if (mimeType?.startsWith("video/")) return "video";
+  // audio/* covers audio/mpeg, audio/ogg, audio/wav, audio/mp4, audio/aac, audio/webm etc.
   if (mimeType?.startsWith("audio/")) return "audio";
   return "document";
 }
@@ -737,18 +738,40 @@ async function handleFileSelected(file) {
     return;
   }
 
+  // Some mobile browsers report empty mimeType for audio — infer from extension
+  let mimeType = file.type;
+  if (!mimeType) {
+    const ext = file.name.split(".").pop().toLowerCase();
+    const extMap = {
+      mp3: "audio/mpeg", ogg: "audio/ogg", wav: "audio/wav",
+      aac: "audio/aac", m4a: "audio/mp4", flac: "audio/flac",
+      opus: "audio/ogg", webm: "audio/webm",
+      mp4: "video/mp4", mov: "video/mp4",
+      jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png",
+      gif: "image/gif", webp: "image/webp",
+      pdf: "application/pdf", txt: "text/plain", csv: "text/csv",
+      zip: "application/zip",
+    };
+    mimeType = extMap[ext] || "application/octet-stream";
+  }
+
+  // Create a patched file object with correct mimeType if needed
+  const effectiveFile = mimeType !== file.type
+    ? new File([file], file.name, { type: mimeType })
+    : file;
+
   showUploadProgress(0);
   toast("Preparing to send…", "info", 1500);
 
   try {
-    const b64 = await fileToBase64WithProgress(file, pct => showUploadProgress(pct));
+    const b64 = await fileToBase64WithProgress(effectiveFile, pct => showUploadProgress(pct));
     wsSend({
       type:      "send_media",
-      mediaType: mediaCat(file.type),
-      fileName:  file.name,
-      mimeType:  file.type || "application/octet-stream",
+      mediaType: mediaCat(mimeType),
+      fileName:  effectiveFile.name,
+      mimeType:  mimeType,
       data:      b64,
-      size:      file.size,
+      size:      effectiveFile.size,
     });
     hideUploadProgress();
     toast("Sent!", "success", 1500);
@@ -949,20 +972,6 @@ function handleError(msg) {
     switchRoom(item.dataset.room);
     closeSidebar();
   });
-
-  // ── New room input ──
-  $("btn-new-room").addEventListener("click", switchFromNewRoomInput);
-  $("new-room-input").addEventListener("keydown", e => {
-    if (e.key === "Enter") switchFromNewRoomInput();
-  });
-
-  function switchFromNewRoomInput() {
-    const val = $("new-room-input").value.trim();
-    if (!val) return;
-    $("new-room-input").value = "";
-    switchRoom(val);
-    closeSidebar();
-  }
 
   // ── Attach menu ──
   btnAttach.addEventListener("click", e => {

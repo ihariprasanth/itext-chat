@@ -347,16 +347,36 @@
 
     <!-- Nav bar -->
     <nav class="about-nav">
-      <a href="index.html" class="about-nav-back">
+      <a id="about-back-btn" href="index.html" class="about-nav-back">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
              stroke-linecap="round" stroke-linejoin="round">
           <polyline points="15 18 9 12 15 6"/>
         </svg>
-        Back
+        <span id="about-back-label">Back</span>
       </a>
 
       <!-- Spacer to balance back button -->
       <div style="flex: 1;"></div>
+
+      <script>
+        // If user came from the chat (referrer is same origin + index.html or has ?room=),
+        // show "Back to Chat" and use history.back() so the chat state is preserved.
+        (function() {
+          var ref = document.referrer;
+          var sameOrigin = ref && ref.startsWith(location.origin);
+          var fromChat = sameOrigin && (ref.includes("index.html") || ref.includes("?room=") || ref === location.origin + "/");
+          var btn = document.getElementById("about-back-btn");
+          var lbl = document.getElementById("about-back-label");
+          if (fromChat) {
+            lbl.textContent = "Back to Chat";
+            btn.href = "javascript:void(0)";
+            btn.addEventListener("click", function(e) {
+              e.preventDefault();
+              history.back();
+            });
+          }
+        })();
+      </script>
     </nav>
 
     <!-- Main content -->
