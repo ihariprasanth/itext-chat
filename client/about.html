@@ -18,21 +18,29 @@
 
     .about-page {
       min-height: 100dvh;
-      background:
-        radial-gradient(ellipse 80% 60% at 50% -20%, rgba(52,199,89,0.15) 0%, transparent 70%),
-        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(52,199,89,0.07) 0%, transparent 60%),
-        var(--bg);
+      background: #000;
       display: flex;
       flex-direction: column;
       position: relative;
     }
 
-    /* Diagonal grid overlay — same as login */
+    /* Graph-paper grid overlay — black bg with subtle white grid lines */
     .about-page::before {
       content: '';
       position: fixed;
       inset: 0;
-      background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 60L60 0' stroke='rgba(255,255,255,0.015)' stroke-width='1'/%3E%3C/svg%3E");
+      background-image:
+        /* Small grid lines */
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
+        /* Large grid lines */
+        linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size:
+        20px 20px,
+        20px 20px,
+        100px 100px,
+        100px 100px;
       pointer-events: none;
       z-index: 0;
     }
@@ -359,12 +367,13 @@
       <div style="flex: 1;"></div>
 
       <script>
-        // If user came from the chat (referrer is same origin + index.html or has ?room=),
-        // show "Back to Chat" and use history.back() so the chat state is preserved.
+        // If user has an active chat session saved, show "Back to Chat" and go back.
+        // This ensures pressing back auto-reconnects them to their room.
         (function() {
+          var hasSession = sessionStorage.getItem("itext_active_session");
           var ref = document.referrer;
           var sameOrigin = ref && ref.startsWith(location.origin);
-          var fromChat = sameOrigin && (ref.includes("index.html") || ref.includes("?room=") || ref === location.origin + "/");
+          var fromChat = hasSession || (sameOrigin && (ref.includes("index.html") || ref.includes("?room=") || ref === location.origin + "/"));
           var btn = document.getElementById("about-back-btn");
           var lbl = document.getElementById("about-back-label");
           if (fromChat) {

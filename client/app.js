@@ -153,7 +153,7 @@ function setActiveRoomChip(roomName) {
 }
 
 function switchRoom(roomName) {
-  const clean = roomName.trim().replace(/\s+/g, "-").toLowerCase();
+  const clean = roomName.trim().replace(/\s+/g, "-");
   if (!clean || !state.username) return;
   addRoomChip(clean);
   setActiveRoomChip(clean);
@@ -888,7 +888,7 @@ function handleError(msg) {
 
   function doJoin() {
     const username = inputUsername.value.trim();
-    const room     = (inputRoom.value.trim().replace(/\s+/g, "-") || "lounge").toLowerCase();
+    const room     = (inputRoom.value.trim().replace(/\s+/g, "-") || "lounge");
 
     joinError.classList.add("hidden");
 
@@ -898,6 +898,7 @@ function handleError(msg) {
       return showJoinError("Name: letters, numbers, _ - . only.");
 
     localStorage.setItem("itext_username", username);
+    sessionStorage.setItem("itext_active_session", JSON.stringify({ username, room }));
 
     const url = new URL(location.href);
     url.searchParams.set("room", room);
@@ -955,6 +956,7 @@ function handleError(msg) {
     closeSidebar();
     state.rooms.clear();
     roomsList.innerHTML = "";
+    sessionStorage.removeItem("itext_active_session");
     showJoinScreen();
     inputUsername.focus();
   });
@@ -1037,3 +1039,20 @@ function handleError(msg) {
   // ── Initial resize ──
   autoResize();
 })();
+
+// ── Auto-reconnect when coming back via history.back() from About page ──
+window.addEventListener("pageshow", (e) => {
+  if (e.persisted) return; // bfcache: socket may still be alive
+  const savedSession = sessionStorage.getItem("itext_active_session");
+  if (savedSession && document.getElementById("join-screen").classList.contains("active")) {
+    try {
+      const { username, room } = JSON.parse(savedSession);
+      if (username && room) {
+        document.getElementById("input-username").value = username;
+        document.getElementById("input-room").value = room;
+        // Auto-trigger join
+        document.getElementById("btn-join").click();
+      }
+    } catch (_) {}
+  }
+});
